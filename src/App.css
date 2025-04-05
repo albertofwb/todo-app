@@ -1,0 +1,57 @@
+.layout {
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.content {
+  padding: 24px;
+}
+
+.footer {
+  text-align: center;
+}
+
+.main-card {
+  margin-top: 20px;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-form {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.task-list {
+  margin-top: 16px;
+}
+
+.task-times {
+  display: flex;
+  font-size: 12px;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+/* Make List items taller to accommodate timestamps */
+.ant-list-item {
+  padding: 12px 0;
+}
+
+/* Better spacing for timestamps */
+.ant-tooltip {
+  max-width: 300px;
+}
