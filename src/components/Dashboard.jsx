@@ -28,9 +28,12 @@ export default function Dashboard() {
       <Header className="dashboard-header">
         <Row justify="space-between" align="middle">
           <Col>
-            <Title level={3} style={{ color: 'white', margin: 0 }}>
-              Todo App
-            </Title>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <img src="/todo-logo.svg" alt="Todo App Logo" style={{ height: '40px', marginRight: '10px' }} />
+              <Title level={3} style={{ color: 'white', margin: 0 }}>
+                Todo App
+              </Title>
+            </div>
           </Col>
           <Col>
             <Text style={{ color: 'white', marginRight: '15px' }}>

@@ -28,6 +28,9 @@ export default function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+          <img src="/todo-logo.svg" alt="Todo App Logo" style={{ height: '80px' }} />
+        </div>
         <h2>Log In</h2>
         {error && <div className="error-alert">{error}</div>}
         <form onSubmit={handleSubmit}>
