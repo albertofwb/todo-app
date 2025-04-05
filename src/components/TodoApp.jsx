@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Row, Col, Card, Divider } from 'antd';
+import { Typography, Row, Col, Card, Divider, message } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from '../contexts/AuthContext';
 import TaskForm from './TaskForm';
 import TaskList from './TaskList';
 import EditTaskModal from './EditTaskModal';
+import { todoService } from '../services/api';
 
 const { Title } = Typography;
 
@@ -13,52 +14,68 @@ function TodoApp() {
   const [tasks, setTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Generate a unique key for each user's tasks in localStorage
-  const userTasksKey = `tasks_${currentUser.uid}`;
-
-  // Load tasks from localStorage on initial render
+  // Load tasks from API
   useEffect(() => {
-    const savedTasks = localStorage.getItem(userTasksKey);
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const response = await todoService.getAllTodos();
+      setTasks(response.data);
+      setLoading(false);
+    } catch (error) {
+      message.error('Failed to load tasks: ' + error.message);
+      setLoading(false);
     }
-  }, [userTasksKey]);
-
-  // Save tasks to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem(userTasksKey, JSON.stringify(tasks));
-  }, [tasks, userTasksKey]);
-
-  const addTask = (text) => {
-    const newTask = {
-      id: uuidv4(),
-      text,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    };
-    setTasks([...tasks, newTask]);
   };
 
-  const toggleComplete = (id) => {
-    setTasks(
-      tasks.map((task) => {
-        if (task.id === id) {
-          const isCompleting = !task.completed;
-          return {
-            ...task,
-            completed: isCompleting,
-            // Record completion time if task is being completed, remove it if uncompleting
-            completedAt: isCompleting ? new Date().toISOString() : null
-          };
-        }
-        return task;
-      })
-    );
+  const addTask = async (text) => {
+    try {
+      const response = await todoService.createTodo({ text });
+      setTasks([...tasks, response.data]);
+      message.success('Task added successfully');
+    } catch (error) {
+      message.error('Failed to add task: ' + error.message);
+    }
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const toggleComplete = async (id) => {
+    try {
+      const task = tasks.find(task => task._id === id);
+      if (!task) return;
+
+      const updatedTask = { 
+        ...task, 
+        completed: !task.completed 
+      };
+      
+      const response = await todoService.updateTodo(id, updatedTask);
+      
+      setTasks(
+        tasks.map((task) => {
+          if (task._id === id) {
+            return response.data;
+          }
+          return task;
+        })
+      );
+    } catch (error) {
+      message.error('Failed to update task: ' + error.message);
+    }
+  };
+
+  const deleteTask = async (id) => {
+    try {
+      await todoService.deleteTodo(id);
+      setTasks(tasks.filter((task) => task._id !== id));
+      message.success('Task deleted successfully');
+    } catch (error) {
+      message.error('Failed to delete task: ' + error.message);
+    }
   };
 
   const startEditing = (task) => {
@@ -66,14 +83,26 @@ function TodoApp() {
     setModalVisible(true);
   };
 
-  const saveTask = (id, newText) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, text: newText } : task
-      )
-    );
-    setModalVisible(false);
-    setEditingTask(null);
+  const saveTask = async (id, newText) => {
+    try {
+      const task = tasks.find(task => task._id === id);
+      if (!task) return;
+
+      const updatedTask = { ...task, text: newText };
+      const response = await todoService.updateTodo(id, updatedTask);
+      
+      setTasks(
+        tasks.map((task) =>
+          task._id === id ? response.data : task
+        )
+      );
+      
+      setModalVisible(false);
+      setEditingTask(null);
+      message.success('Task updated successfully');
+    } catch (error) {
+      message.error('Failed to update task: ' + error.message);
+    }
   };
 
   // Filter tasks
@@ -97,6 +126,7 @@ function TodoApp() {
               toggleComplete={toggleComplete}
               deleteTask={deleteTask}
               startEditing={startEditing}
+              loading={loading}
             />
             
             {completedTasks.length > 0 && (
@@ -107,6 +137,7 @@ function TodoApp() {
                   toggleComplete={toggleComplete}
                   deleteTask={deleteTask}
                   startEditing={startEditing}
+                  loading={loading}
                 />
               </>
             )}

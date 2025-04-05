@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Signup() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,10 +22,10 @@ export default function Signup() {
     try {
       setError('');
       setLoading(true);
-      await signup(email, password);
+      await signup(name, email, password);
       navigate('/');
     } catch (error) {
-      setError('Failed to create an account: ' + error.message);
+      setError('Failed to create an account: ' + (error.response?.data?.message || error.message));
     }
 
     setLoading(false);
@@ -36,6 +37,16 @@ export default function Signup() {
         <h2>Sign Up</h2>
         {error && <div className="error-alert">{error}</div>}
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input

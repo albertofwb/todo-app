@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from '../firebase';
+import { authService } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -11,32 +11,44 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  function signup(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
+  async function signup(name, email, password) {
+    try {
+      const response = await authService.register({ name, email, password });
+      setCurrentUser(response.user);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  function login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+  async function login(email, password) {
+    try {
+      const response = await authService.login({ email, password });
+      setCurrentUser(response.user);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 
   function logout() {
-    return signOut(auth);
+    authService.logout();
+    setCurrentUser(null);
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setLoading(false);
-    });
-
-    return unsubscribe;
+    // Check if user is logged in from localStorage
+    const user = authService.getCurrentUser();
+    setCurrentUser(user);
+    setLoading(false);
   }, []);
 
   const value = {
     currentUser,
     signup,
     login,
-    logout
+    logout,
+    isAuthenticated: authService.isAuthenticated
   };
 
   return (
