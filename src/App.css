@@ -55,3 +55,105 @@
 .ant-tooltip {
   max-width: 300px;
 }
+
+/* Authentication Styles */
+.signup-container,
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.signup-card,
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.error-alert {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+  color: #ff4d4f;
+}
+
+.signup-card button,
+.login-card button {
+  width: 100%;
+  padding: 10px;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.signup-card button:hover,
+.login-card button:hover {
+  background-color: #40a9ff;
+}
+
+.signup-card button:disabled,
+.login-card button:disabled {
+  background-color: #d9d9d9;
+  cursor: not-allowed;
+}
+
+.login-link,
+.signup-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Dashboard styles */
+.dashboard-layout {
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  padding: 0 24px;
+}
+
+.dashboard-content {
+  padding: 24px;
+}
+
+.welcome-card {
+  margin-bottom: 30px;
+  padding: 30px;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.todo-app-container {
+  margin-top: 20px;
+}
